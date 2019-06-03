@@ -33,7 +33,7 @@ def button_callback(channel):
 def record_start():
     global p
     print("start record")
-    p = subprocess.Popen(["ls", "-la"])
+#    p = subprocess.Popen(["ls", "-la"])
 
 def record_stop():
     global p
@@ -60,7 +60,7 @@ def setup ():
     GPIO.setup(11, GPIO.OUT)
 
     # Setup event on pin 10 rising edge
-    GPIO.add_event_detect(23,GPIO.BOTH,callback=button_callback, bouncetime=500)
+    GPIO.add_event_detect(23,GPIO.RISING,callback=button_callback, bouncetime=500)
 
     # Init state machine
     state_toggle()
@@ -78,7 +78,7 @@ async def async_runner():
         else:
             mode = "on"
 
-        print("loop, state: " + str(state) + " - led: " + mode + " - blink: " + str(on))
+#        print("loop, state: " + str(state) + " - led: " + mode + " - blink: " + str(on))
         if mode is "flash":
             if on:
                 GPIO.output(11, GPIO.LOW)
