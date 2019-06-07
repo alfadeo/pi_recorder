@@ -4,7 +4,12 @@ import RPi.GPIO as GPIO
 import subprocess
 import sys
 from time import sleep
+from datetime import datetime
+from os import path
 import asyncio
+
+# Config
+record_path = "/home/pi/record"
 
 # LED states
 STATE_STANDBY = 'standby'
@@ -31,9 +36,13 @@ def button_callback(channel):
     state_toggle()
 
 def record_start():
-    global p
+    global p, record_path
+    now = datetime.now()
+    datestring = now.strftime("%Y-%m-%d_%H-%M-%S")
+    filename = datestring + ".wav"
+    filepath = path.join(record_path, filename)
     print("start record")
-#    p = subprocess.Popen(["ls", "-la"])
+    p = subprocess.Popen(["arecord", filepath])
 
 def record_stop():
     global p
