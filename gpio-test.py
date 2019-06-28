@@ -9,7 +9,7 @@ from os import path
 import asyncio
 
 # Config
-record_path = "/home/pi/record"
+record_path = "/data/record"
 
 # LED states
 STATE_STANDBY = 'standby'
