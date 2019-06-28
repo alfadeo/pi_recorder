@@ -8,7 +8,16 @@
     "watch": "watchify index.js -o bundle.js"
   },
   "browserify": {
-    "transform": [["sheetify/transform", { "transform": ["sheetify-nested"] }]]
+    "transform": [
+      [
+        "sheetify/transform",
+        {
+          "transform": [
+            "sheetify-nested"
+          ]
+        }
+      ]
+    ]
   },
   "author": "",
   "license": "ISC",

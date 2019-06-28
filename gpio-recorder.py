@@ -41,8 +41,18 @@ def record_start():
     datestring = now.strftime("%Y-%m-%d_%H-%M-%S")
     filename = datestring + ".wav"
     filepath = path.join(record_path, filename)
-    print("start record")
-    p = subprocess.Popen(["arecord", filepath])
+
+    command = [
+        "arecord",
+        "-D", "hw:2,1",
+        "-f", "S16_LE",
+        "-c", "2",
+        "-r", "44100",
+        filepath
+    ]
+
+    print("start record: " + str(filepath))
+    p = subprocess.Popen(command)
 
 def record_stop():
     global p
@@ -108,21 +118,6 @@ async def debug_runner():
 async def wait_for_button():
     GPIO.wait_for_edge(23, GPIO.RISING)
     print("EVENT RISING")
-
-# # Main loop (recursive)
-# def run ():
-#     # Check for input
-#     msg = raw_input("Press q to quit, b for button\n\n") # Run until someone presses enter
-#     if msg is 'b':
-#         button_callback(0)
-#     elif msg is 'q':
-#         # Clean um GPIO settings
-#         GPIO.cleanup()
-#         sys.exit()
-
-#     # Restart the loop
-#     run()
-
 
 setup()
 run()
