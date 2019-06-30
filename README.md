@@ -10,7 +10,7 @@ A simple WAV/MP3 recorder on a raspberry pi with hifiberry dac+ adc and a harddr
 
 ## How it works
 
-A Python script uses [RPi.GPIO](https://pypi.org/project/RPi.GPIO/) to listen on a button, start/stop recording (with `arecord`), and let a LED blink.
+A Python script uses [RPi.GPIO](https://pypi.org/project/RPi.GPIO/) to listen on a button, start/stop recording (with `arecord`), and let a LED blink. It places recorded WAV files in a folder Recordings.
 
 A NodeJS server uses [Express](https://expressjs.com/en/starter/hello-world.html) to serve the recorded files, a JSON object of all files plus metadata, and the frontend. 
 
