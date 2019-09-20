@@ -1,0 +1,8 @@
+[Unit]
+Description=pi-recorder: webui
+
+[Service]
+ExecStart=/usr/bin/node %h/pi-recorder/webui/server.js
+
+[Install]
+WantedBy=default.target

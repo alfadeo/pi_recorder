@@ -1,0 +1,8 @@
+[Unit]
+Description=pi-recorder: gpio-recorder.py
+
+[Service]
+ExecStart=%h/pi-recorder/gpio-recorder.py
+
+[Install]
+WantedBy=default.target
