@@ -21,7 +21,7 @@ p = None
 
 def state_toggle(): 
     global state
-    print("state toggle (was " + str(state)) + ")"
+    print("state toggle (was " + str(state) + ")")
     newstate = None
     if state is STATE_STANDBY:
         newstate = STATE_RECORD
@@ -29,7 +29,7 @@ def state_toggle():
     if state is STATE_RECORD or state is None:
         newstate = STATE_STANDBY
         record_stop()
-    print("state toggle (now " + str(newstate)) + ")"
+    print("state toggle (now " + str(newstate) + ")")
     state = newstate
 
 def button_callback(channel):

@@ -2,11 +2,30 @@
 
 A simple WAV/MP3 recorder on a raspberry pi with hifiberry dac+ adc and a harddrive to record and share data on a local network with only one click
 
-## Usage
+## Installation
 
-`./install.sh`- install dependencies
+```
+git clone git@github.com:interym/pi-recorder.git $HOME/pi-recorder
+cd $HOME/pi-recorder
+./systemd/install.sh
+./systemd/start.sh
+```
 
-`./run.sh` - run the GPIO handler and web ui
+To auto-start at boot, enable user lingering for your user.
+
+```
+loginctl enable-linger your-username
+```
+
+*Note: Currently, the sytemd scripts assume that a checkout resides in $HOME/pi-recorder*
+
+The systemd units that are installed above do nothing but execute two commands:
+
+* Start the GPIO-controlled recorder: 
+  `./gpio-recorder.py`
+
+* Start the web ui: 
+  `node webui/server.js`
 
 ## How it works
 
