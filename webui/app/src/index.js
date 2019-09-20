@@ -41,7 +41,12 @@ function recordStore (state, emitter) {
     const url = toUrl('recs.json')
     const res = await fetch(url)
     const json = await res.json()
-    const files = json.files.sort()
+    const files = json.files
+    files.sort((a, b) => {
+      const x = a.ctime
+      const y = b.ctime
+      return x < y ? 1 : x > y ? -1 : 0
+    })
     state.files = files
     console.log('files', state.files)
     emitter.emit('render')
