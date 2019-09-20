@@ -2,6 +2,7 @@ const choo = require('choo')
 const html = require('choo/html')
 const pretty = require('pretty-bytes')
 const css = require('sheetify')
+const WaveSurfer = require('wavesurfer.js')
 
 css('../style.css')
 
@@ -22,15 +23,15 @@ function recordStore (state, emitter) {
   state.files = []
   state.player = {}
 
-  const audio = document.createElement('audio')
-  audio.id = 'audio-player'
-  audio.controls = 'controls'
-  audio.type = 'audio/mpeg'
+  const wavesurfer = WaveSurfer.create({
+    container: '#waveform',
+    backend: 'MediaElement',
+    mediaControls: false,
+    waveColor: 'violet',
+    progressColor: 'purple'
+  })
 
   emitter.on('DOMContentLoaded', async () => {
-
-    document.body.appendChild(audio)
-
     loadFiles()
     emitter.emit('render')
   })
@@ -53,12 +54,17 @@ function recordStore (state, emitter) {
   }
 
   emitter.on('file:select', file => {
-    audio.src = toUrl('rec/' + file.name)
+    const url = toUrl('rec/' + file.name)
+    // audio.src = url
     if (state.file !== file || state.player.playing) {
-      audio.play()
+      // audio.play()
+      wavesurfer.on('ready', function () {
+        wavesurfer.play()
+      })
       state.player.playing = true
     }
     state.file = file
+    wavesurfer.load(url)
     emitter.emit('render')
   })
 
@@ -87,9 +93,9 @@ function recordStore (state, emitter) {
 
   emitter.on('player:playpause', () => {
     state.player.playing = !state.player.playing
-    if (state.file && audio) {
-      if (state.player.playing) audio.play()
-      else audio.pause()
+    if (state.file && wavesurfer) {
+      if (state.player.playing) wavesurfer.play()
+      else wavesurfer.pause()
     }
     emitter.emit('render')
   })
