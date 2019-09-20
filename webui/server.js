@@ -11,27 +11,28 @@ const config = {
 
 const app = express()
 
-app.use('/rec', express.static(config.recpath))
 app.use('/', express.static(p.join(__dirname, 'app')))
+app.use('/rec', express.static(config.recpath))
 app.use('/api', bodyParser.json())
 app.use(logErrors)
 
 function logErrors (err, req, res, next) {
-  console.error(err.stack)
+  console.error('Error', req, err.stack)
   res.status(500)
   next(err)
 }
 
 app.get('/recs.json', function (req, res, next) {
-  getRecordings((err, json) => {
+  getRecordings(config.recpath, (err, files) => {
     if (err) return next(err)
+    const json = { files }
     res.setHeader('Content-Type', 'application/json')
     res.end(JSON.stringify(json))
   })
 })
 
 app.post('/api/rename', function (req, res, next) {
-  console.log(req.body)
+  console.log('/api/rename: %o', req.body)
   if (!req.body || !req.body.file) return res.status(500).send('Invalid request')
 
   const { file, label } = req.body
@@ -50,12 +51,6 @@ app.post('/api/rename', function (req, res, next) {
       res.status(200).send()
     })
   })
-  // try {
-  //   console.log(JSON.parse(res.body))
-  // } catch (e) {
-  //   console.log('ERROR', e)
-  // }
-  // res.status(200).send()
 })
 
 app.listen(config.port, config.host, () => {
@@ -63,47 +58,49 @@ app.listen(config.port, config.host, () => {
 })
 
 function filePath (filename) {
-  let basepath = config.recpath
+  const basepath = config.recpath
   return p.join(basepath, filename)
 }
 
-function getRecordings (cb) {
-  let basepath = config.recpath
+function getRecordings (basepath, cb) {
   const list = []
-  let missing = 0
-  fs.readdir(basepath, (err, files) => {
-    if (err) return cb(err)
-    files.forEach(file => {
-      if (!allowed(file)) return
-      add(file)
-    })
-  })
 
-  function add (file) {
-    missing++
-    fs.stat(p.join(basepath, file), (err, stat) => {
+  fs.readdir(basepath, onlist)
+
+  function onlist (err, files) {
+    if (err) return cb(err)
+    files = files.filter(file => isFileAllowed(file))
+
+    let pending = files.length
+    files.forEach(filename => fileInfo(p.join(basepath, filename), ondone))
+
+    function ondone (err, info) {
+      if (err) return cb(err)
+      list.push(info)
+      if (--pending === 0) cb(null, list)
+    }
+  }
+
+  function fileInfo (path, cb) {
+    fs.stat(path, (err, stat) => {
       if (err) return cb(err)
 
-      let row = { name: file, size: stat.size, ctime: stat.ctime }
+      const row = { name: p.basename(path), size: stat.size, ctime: stat.ctime }
 
-      fs.readFile(p.join(basepath, file + '.json'), (err, buf) => {
+      fs.readFile(path + '.json', (err, buf) => {
         if (!err) {
-          row.meta = JSON.parse(buf.toString())
+          try {
+            row.meta = JSON.parse(buf.toString())
+          } catch (err) {
+            console.error('Invalid JSON: ' + path, err)
+          }
         }
-
-        list.push(row)
-        maybeDone()
+        cb(null, row)
       })
     })
   }
 
-  function allowed (file) {
+  function isFileAllowed (file) {
     return file.match(/\.(mp3|wav)$/)
-  }
-
-  function maybeDone () {
-    if (--missing) return
-    let files = list.sort((a, b) => a.name > b.name ? 1 : -1).reverse()
-    cb(null, { files })
   }
 }

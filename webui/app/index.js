@@ -41,6 +41,7 @@ function recordStore (state, emitter) {
     let url = toUrl('recs.json')
     let res = await fetch(url)
     let json = await res.json()
+    console.log('json', json)
     state.files = json.files
     console.log('files', state.files)
     emitter.emit('render')
