@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "browserify index.js > bundle.js",
-    "watch": "NODE_ENV=development watchify index.js -o bundle.js -v"
+    "build": "browserify src/index.js > bundle.js",
+    "watch": "NODE_ENV=development watchify src/index.js -o bundle.js -v"
   },
   "browserify": {
     "transform": [
