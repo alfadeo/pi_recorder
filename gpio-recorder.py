@@ -44,7 +44,7 @@ def record_start():
 
     command = [
         "arecord",
-        "-D", "hw:2,1",
+        "-D", "hw:1,0",
         "-f", "S16_LE",
         "-c", "2",
         "-r", "44100",
@@ -68,23 +68,22 @@ def setup ():
 
     GPIO.cleanup()
 
-    # use P1 header pin numbering convention
+    # Use physical pin numbering convention (also called P1 or BOARD)
     GPIO.setmode(GPIO.BOARD)
 
-    # Set up the GPIO channels - one input and one output
-    # Use physical pin numbering
+    # Pin 23: IN for button
     GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-    # Set pin 10 to be an input pin and set initial value to be pulled low (off)
+    # Pin 11: OUT for LED
     GPIO.setup(11, GPIO.OUT)
 
-    # Setup event on pin 10 rising edge
+    # Pin 23: Detect rising edge and invoke button callback
     GPIO.add_event_detect(23,GPIO.RISING,callback=button_callback, bouncetime=500)
 
     # Init state machine
     state_toggle()
 
-
+    # Run async event loop
     loop.run_until_complete(asyncio.gather(async_runner()))
 
 async def async_runner():
@@ -97,7 +96,7 @@ async def async_runner():
         else:
             mode = "on"
 
-#        print("loop, state: " + str(state) + " - led: " + mode + " - blink: " + str(on))
+        print("loop, state: " + str(state) + " - led: " + mode + " - blink: " + str(on))
         if mode is "flash":
             if on:
                 GPIO.output(11, GPIO.LOW)
