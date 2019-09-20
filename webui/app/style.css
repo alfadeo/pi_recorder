@@ -9,6 +9,15 @@ body {
   font-size: 16px;
   padding: 0;
   padding-bottom: 10rem;
+  padding-top: 128px;
+}
+
+#waveform {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 128px;
+  background: black;
 }
 
 h1 {
@@ -52,7 +61,7 @@ ul.files {
 
 .player {
   position: fixed;
-  background: #90f;
+  background: darkviolet;
   bottom: 0;
   left: 0;
   right: 0;
@@ -71,7 +80,7 @@ ul.files {
     font-size: 2rem;
     font-weight: bold;
     text-transform: uppercase;
-    color: #90f;
+    color: darkviolet;
     border: 1rem solid #fff;
     cursor: pointer;
     background: #fff;

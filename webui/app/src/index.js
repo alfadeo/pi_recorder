@@ -27,8 +27,8 @@ function recordStore (state, emitter) {
     container: '#waveform',
     backend: 'MediaElement',
     mediaControls: false,
-    waveColor: 'violet',
-    progressColor: 'purple'
+    waveColor: 'green',
+    progressColor: 'red'
   })
 
   emitter.on('DOMContentLoaded', async () => {
