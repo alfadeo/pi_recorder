@@ -1,15 +1,22 @@
 const choo = require('choo')
 const html = require('choo/html')
 const pretty = require('pretty-bytes')
-const sheetify = require('sheetify')
+const css = require('sheetify')
+
+css('./style.css')
 
 const app = choo()
 
-sheetify('./style.css')
+if (process.env.NODE_ENV !== 'production') {
+  app.use(require('choo-devtools')())
+}
 
 app.use(recordStore)
 app.route('/', mainView)
 app.mount('#root')
+app.emit.as = function (name, ...args) {
+  return e => app.emit(name, ...args, e)
+}
 
 function recordStore (state, emitter) {
   state.files = []
@@ -58,17 +65,18 @@ function recordStore (state, emitter) {
     })
     data.file = state.file.name
 
-    fetch('/api/rename', {
+    const path = '/api/rename'
+
+    fetch(path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
       .then(res => {
-        if (!res.ok) return console.log('oh no!')
+        if (!res.ok) return console.error(`Could not fetch: ${path}`, res)
         emitter.emit('file:load')
-        console.log('request ok \o/')
       })
-      .catch(err => console.log('oh no!'))
+      .catch(err => console.error(`Could not fetch: ${path}`, err))
   })
 
   emitter.on('player:playpause', () => {
@@ -122,7 +130,9 @@ function playerView (state, emit) {
   return html`
     <div class='player'>
       <div class='meta'>
-        <h3>${file.name}</h3>
+        <h3>${file.meta && file.meta.label ? file.meta.label : file.name}</h3>
+        <em>Filename: ${file.name}</em>
+        <br/>
         <em>Size: ${pretty(file.size)}</em>
         <br/>
         <em>Date: ${file.ctime}</em>
@@ -149,16 +159,12 @@ function fileUrl (file) {
 function filesView (state, emit) {
   let files
   if (state.files) {
-    files = state.files.map(file => html`
-      <li onclick=${e => onFile(file)}>
+    files = state.files.map((file, i) => html`
+      <li id=${`file-${i}`} onclick=${emit.as('file:select', file)}>
         ${file.name}
         <em>${file.meta && file.meta.label}</em>
       </li>
     `)
-  }
-
-  function onFile (file) {
-    emit('file:select', file)
   }
 
   return html`
