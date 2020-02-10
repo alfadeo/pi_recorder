@@ -9,7 +9,9 @@ from os import path
 import asyncio
 
 # Config
-record_path = "/data/record"
+record_path = "./data/record"
+#record_path = "/media/pi"
+#record_path = "/data/record"
 
 # LED states
 STATE_STANDBY = 'standby'
@@ -45,10 +47,10 @@ def record_start():
 
     command = [
         "arecord",
-        "-D", "hw:1,0",
-        "-f", "S16_LE",
+        "-D", "hw:0,0",
+        "-f", "S24_LE",
         "-c", "2",
-        "-r", "44100",
+        "-r", "48000",
         filepath
     ]
 
@@ -72,14 +74,14 @@ def setup ():
     # Use physical pin numbering convention (also called P1 or BOARD)
     GPIO.setmode(GPIO.BOARD)
 
-    # Pin 23: IN for button
-    GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    # Pin 11: IN for button
+    GPIO.setup(11, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    # Pin 11: OUT for LED
-    GPIO.setup(11, GPIO.OUT)
+    # Pin 29: OUT for LED
+    GPIO.setup(29, GPIO.OUT)
 
-    # Pin 23: Detect rising edge and invoke button callback
-    GPIO.add_event_detect(23,GPIO.RISING,callback=button_callback, bouncetime=500)
+    # Pin 11: Detect rising edge and invoke button callback
+    GPIO.add_event_detect(11,GPIO.RISING,callback=button_callback, bouncetime=500)
 
     # Init state machine
     state_toggle()
@@ -100,13 +102,13 @@ async def async_runner():
         # print("loop, state: " + str(state) + " - led: " + mode + " - blink: " + str(on))
         if mode is "flash":
             if on:
-                GPIO.output(11, GPIO.LOW)
+                GPIO.output(29, GPIO.LOW)
                 on = False
             else:
-                GPIO.output(11, GPIO.HIGH)
+                GPIO.output(29, GPIO.HIGH)
                 on = True
         else:
-            GPIO.output(11, GPIO.HIGH)
+            GPIO.output(29, GPIO.HIGH)
 
         await asyncio.sleep(0.5)
            
@@ -116,7 +118,7 @@ async def debug_runner():
         await wait_for_button()
 
 async def wait_for_button():
-    GPIO.wait_for_edge(23, GPIO.RISING)
+    GPIO.wait_for_edge(11, GPIO.RISING)
     print("EVENT RISING")
 
 setup()

@@ -6,7 +6,7 @@ const p = require('path')
 const config = {
   port: 8080,
   host: '0.0.0.0',
-  recpath: p.resolve(process.env.RECORD_PATH || '/data/record')
+  recpath: p.resolve(process.env.RECORD_PATH || '../data/record')
 }
 
 const app = express()
