@@ -11,15 +11,28 @@ cd $HOME/pi-recorder
 ./systemd/start.sh
 ```
 
-To auto-start at boot, enable user lingering for your user.
+To auto-start at boot:
 
 ```
-loginctl enable-linger your-username
+sudo cp /home/pi/pi-recorder/gpio-recorder.py /etc/init.d/
+cd /etc/init.d
+sudo nano gpio-recorder.py
 ```
+edit file with:
+```
+# /etc/init.d/gpio-recorder.py
+### BEGIN INIT INFO
+# Provides:          gpio-recorder.py
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+*Note: we start the recorder only with this*
 
-*Note: Currently, the sytemd scripts assume that a checkout resides in $HOME/pi-recorder*
 
-The systemd units that are installed above do nothing but execute two commands:
 
 * Start the GPIO-controlled recorder: 
   `./gpio-recorder.py`
