@@ -9,9 +9,9 @@ from os import path
 import asyncio
 
 # Config
-record_path = "./data/record"
+#record_path = "./data/record"
 #record_path = "/media/pi"
-#record_path = "/data/record"
+record_path = "/data/record"
 
 # LED states
 STATE_STANDBY = 'standby'
