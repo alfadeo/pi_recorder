@@ -5,7 +5,7 @@ A simple WAV/MP3 recorder on a raspberry pi with hifiberry dac+ adc and a harddr
 ## Installation
 
 ```
-git clone git@github.com:interym/pi-recorder.git $HOME/pi-recorder
+git clone git@github.com:alfadeo/pi_recorder.git $HOME/pi-recorder
 cd $HOME/pi-recorder
 ./systemd/install.sh
 ./systemd/start.sh
@@ -30,6 +30,7 @@ edit file with:
 # Short-Description: Start daemon at boot time
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
+```
 *Note: we start the recorder only with this*
 
 
